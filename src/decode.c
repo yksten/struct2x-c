@@ -2,9 +2,11 @@
 #include "thirdParty/cJSON.h"
 
 
-bool decodeBool(cJSON* obj, const char* sz, void* stru, int offset) {
-    bool* value = (bool*)((int)stru + offset);
-    cJSON* item = cJSON_GetObjectItem(obj, sz);
+void decodeObj(cJSON* obj, void* stru, const field_iter* filelds);
+
+bool decodeBool(cJSON* obj, void* stru, const field_iter* fileld) {
+    bool* value = (bool*)((int)stru + fileld->offset);
+    cJSON* item = cJSON_GetObjectItem(obj, fileld->szName);
     if (item) {
         if (item->type == cJSON_False)
             *value = false;
@@ -13,63 +15,74 @@ bool decodeBool(cJSON* obj, const char* sz, void* stru, int offset) {
     }
 }
 
-void decodeChar(cJSON* obj, const char* sz, void* stru, int offset) {
-    char* value = (char*)((int)stru + offset);
-    cJSON* item = cJSON_GetObjectItem(obj, sz);
+void decodeChar(cJSON* obj, void* stru, const field_iter* fileld) {
+    char* value = (char*)((int)stru + fileld->offset);
+    cJSON* item = cJSON_GetObjectItem(obj, fileld->szName);
     if (item) {
         *value = item->valueint;
     }
 }
 
-void decodeInt(cJSON* obj, const char* sz, void* stru, int offset) {
-    int* value = (int*)((int)stru + offset);
-    cJSON* item = cJSON_GetObjectItem(obj, sz);
+void decodeInt(cJSON* obj, void* stru, const field_iter* fileld) {
+    int* value = (int*)((int)stru + fileld->offset);
+    cJSON* item = cJSON_GetObjectItem(obj, fileld->szName);
     if (item) {
         *value = item->valueint;
     }
 }
 
-void decodeFloat(cJSON* obj, const char* sz, void* stru, int offset) {
-    float* value = (float*)((int)stru + offset);
-    cJSON* item = cJSON_GetObjectItem(obj, sz);
+void decodeFloat(cJSON* obj, void* stru, const field_iter* fileld) {
+    float* value = (float*)((int)stru + fileld->offset);
+    cJSON* item = cJSON_GetObjectItem(obj, fileld->szName);
     if (item) {
         *value = item->valuedouble;
     }
 }
 
-void decodeDouble(cJSON* obj, const char* sz, void* stru, int offset) {
-    double* value = (double*)((int)stru + offset);
-    cJSON* item = cJSON_GetObjectItem(obj, sz);
+void decodeDouble(cJSON* obj, void* stru, const field_iter* fileld) {
+    double* value = (double*)((int)stru + fileld->offset);
+    cJSON* item = cJSON_GetObjectItem(obj, fileld->szName);
     if (item) {
         *value = item->valuedouble;
     }
 }
 
-void decodeString(cJSON* obj, const char* sz, void* stru, int offset) {
-    char** value = (char**)((int)stru + offset);
-    cJSON* item = cJSON_GetObjectItem(obj, sz);
+void decodeString(cJSON* obj, void* stru, const field_iter* fileld) {
+    char** value = (char**)((int)stru + fileld->offset);
+    cJSON* item = cJSON_GetObjectItem(obj, fileld->szName);
     if (item) {
         *value = item->valuestring;
     }
 }
 
-typedef void(*decodeFunction)(cJSON*, const char*, void*, int);
+void decodeStruct(cJSON* obj, void* stru, const field_iter* fileld) {
+    void* item = (void*)((int)stru + fileld->offset);
+    cJSON* childObj = cJSON_GetObjectItem(obj, fileld->szName);
+    decodeObj(childObj, item, fileld->childFieldIter);
+}
+
+typedef void(*decodeFunction)(cJSON*, void*, const field_iter*);
 const decodeFunction decodeArray[ETYPE_MAX] = {
     &decodeBool,
     &decodeChar,
     &decodeInt,
     &decodeFloat,
     &decodeDouble,
-    &decodeString
+    &decodeString,
+    &decodeStruct
 };
 
-bool decode(void* stru, const field_iter* filelds, const char* sz) {
-    cJSON* root = cJSON_Parse(sz);
+void decodeObj(cJSON* obj, void* stru, const field_iter* filelds) {
     const field_iter* curFileld = filelds;
     do {
         unsigned type = curFileld->type;
-        decodeArray[type](root, curFileld->szNmae, stru, curFileld->offset);
+        decodeArray[type](obj, stru, curFileld);
     } while (curFileld++ && fieldTypeIsValid(curFileld->type));
+}
+
+bool decode(void* stru, const field_iter* filelds, const char* sz) {
+    cJSON* root = cJSON_Parse(sz);
+    decodeObj(root, stru, filelds);
     
     return true;
 }

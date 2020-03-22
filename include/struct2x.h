@@ -4,7 +4,7 @@
 
 #define offsetof(s,m) (size_t)&(((s *)0)->m)
 
-#define FIELDITER(stru, field, type) { #field, type, offsetof(struct stru, field) }
+#define FIELDITER(stru, field, type, iter) { #field, type, offsetof(struct stru, field), iter }
 
 enum {
     ETYPE_BOOL,
@@ -13,15 +13,19 @@ enum {
     ETYPE_FLOAT,
     ETYPE_DOUBLE,
     ETYPE_STRING,
+    ETYPE_STRUCT,
     ETYPE_MAX
 };
 
 bool fieldTypeIsValid(unsigned int type);
 
+typedef struct field_iter field_iter_t;
+
 typedef struct field_iter {
-    const char* szNmae;
+    const char* szName;
     int type;
     unsigned int offset;
+    field_iter_t* childFieldIter;
 }field_iter;
 
 
