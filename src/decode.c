@@ -47,14 +47,6 @@ void decodeDouble(cJSON* obj, void* stru, const field_iter* fileld) {
     }
 }
 
-void decodeString(cJSON* obj, void* stru, const field_iter* fileld) {
-    char** value = (char**)((int)stru + fileld->offset);
-    cJSON* item = cJSON_GetObjectItem(obj, fileld->szName);
-    if (item) {
-        *value = item->valuestring;
-    }
-}
-
 void decodeStruct(cJSON* obj, void* stru, const field_iter* fileld) {
     void* item = (void*)((int)stru + fileld->offset);
     cJSON* childObj = cJSON_GetObjectItem(obj, fileld->szName);
@@ -68,7 +60,6 @@ const decodeFunction decodeArray[ETYPE_MAX] = {
     &decodeInt,
     &decodeFloat,
     &decodeDouble,
-    &decodeString,
     &decodeStruct
 };
 

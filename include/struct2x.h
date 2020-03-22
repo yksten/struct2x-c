@@ -12,7 +12,6 @@ enum {
     ETYPE_INT,
     ETYPE_FLOAT,
     ETYPE_DOUBLE,
-    ETYPE_STRING,
     ETYPE_STRUCT,
     ETYPE_MAX
 };

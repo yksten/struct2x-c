@@ -9,7 +9,6 @@ bool fieldTypeIsValid(unsigned int type) {
     case ETYPE_INT:
     case ETYPE_FLOAT:
     case ETYPE_DOUBLE:
-    case ETYPE_STRING:
     case ETYPE_STRUCT:
         return true;
     default:
@@ -47,11 +46,6 @@ void encodeDouble(cJSON* obj, void* stru, const field_iter* fileld) {
     cJSON_AddNumberToObject(obj, fileld->szName, item);
 }
 
-void encodeString(cJSON* obj, void* stru, const field_iter* fileld) {
-    char* item = *(char**)((int)stru + fileld->offset);
-    cJSON_AddStringToObject(obj, fileld->szName, item);
-}
-
 void encodeStruct(cJSON* obj, void* stru, const field_iter* fileld) {
     void* item = (void*)((int)stru + fileld->offset);
     cJSON* childObj = cJSON_CreateObject();
@@ -66,7 +60,6 @@ const encodeFunction encodeArray[ETYPE_MAX] = {
     &encodeInt,
     &encodeFloat,
     &encodeDouble,
-    &encodeString,
     &encodeStruct
 };
 
