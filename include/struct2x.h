@@ -4,6 +4,8 @@
 
 #define offsetof(s,m) (size_t)&(((s *)0)->m)
 
+#define FIELDITER(stru, field, type) { #field, type, offsetof(struct stru, field) }
+
 enum {
     ETYPE_BOOL,
     ETYPE_CHAR,

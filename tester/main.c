@@ -14,14 +14,13 @@ typedef struct data {
 
 
 field_iter data_fields[] = {
-    { "bValue", ETYPE_BOOL, offsetof(struct data, bValue) },
-    { "cValue", ETYPE_CHAR, offsetof(struct data, cValue) },
-    { "nValue", ETYPE_INT, offsetof(struct data, nValue) },
-    { "fValue", ETYPE_FLOAT, offsetof(struct data, fValue) },
-    { "dbValue", ETYPE_DOUBLE, offsetof(struct data, dbValue) },
-    { "szValue", ETYPE_STRING, offsetof(struct data, szValue) }
+    FIELDITER(data, bValue, ETYPE_BOOL),
+    FIELDITER(data, cValue, ETYPE_CHAR),
+    FIELDITER(data, nValue, ETYPE_INT),
+    FIELDITER(data, fValue, ETYPE_FLOAT),
+    FIELDITER(data, dbValue, ETYPE_DOUBLE),
+    FIELDITER(data, szValue, ETYPE_STRING)
 };
-
 
 
 int main() {
