@@ -79,5 +79,6 @@ const char* encode(void* stru, const field_iter* filelds, bool bUnformatted) {
         out = cJSON_PrintUnformatted(root);
     else 
         out = cJSON_Print(root);
+    cJSON_Delete(root);
     return out;
 }

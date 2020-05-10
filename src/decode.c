@@ -74,6 +74,6 @@ void decodeObj(cJSON* obj, void* stru, const field_iter* filelds) {
 bool decode(void* stru, const field_iter* filelds, const char* sz) {
     cJSON* root = cJSON_Parse(sz);
     decodeObj(root, stru, filelds);
-    
+    cJSON_Delete(root);
     return true;
 }

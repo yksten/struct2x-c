@@ -7,7 +7,8 @@ typedef struct childStru {
 }childStru;
 
 field_iter childStru_fields[] = {
-    FIELDITER(childStru, bValue, ETYPE_BOOL, 0)
+    FIELDITER(childStru, bValue, ETYPE_BOOL, 0),
+    FIELDITEREND
 };
 
 typedef struct data {
@@ -26,16 +27,20 @@ field_iter data_fields[] = {
     FIELDITER(data, nValue, ETYPE_INT, 0),
     FIELDITER(data, fValue, ETYPE_FLOAT, 0),
     FIELDITER(data, dbValue, ETYPE_DOUBLE, 0),
-    FIELDITER(data, child, ETYPE_STRUCT, childStru_fields)
+    FIELDITER(data, child, ETYPE_STRUCT, childStru_fields),
+    FIELDITEREND
 };
 
 
 int main() {
     data ins = { true, 'f', 6, 7.7, 9.9, {true} };
     const char* sz = encode(&ins, data_fields, true);
+    printf("json: %s\n", sz);
 
     data ins2;
     decode(&ins2, data_fields, sz);
+
+    //assert(ins == ins2);
 
     free(sz);
     return 0;
